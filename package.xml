@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>traversability_layer</name>
+  <version>0.0.0</version>
+  <description>The traversability_layer package</description>
+
+  <maintainer email="gstavrinos@iit.demokritos.gr">George Stavrinos</maintainer>
+
+
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>costmap_2d</depend>
+  <depend>dynamic_reconfigure</depend>
+  <depend>grid_map_msgs</depend>
+  <depend>roscpp</depend>
+
+  <export>
+  </export>
+</package>
