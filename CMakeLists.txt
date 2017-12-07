@@ -4,18 +4,18 @@ project(traversability_layer)
 add_compile_options(-std=c++11)
 
 find_package(catkin REQUIRED COMPONENTS
-  costmap_2d
-  dynamic_reconfigure
-  grid_map_msgs
   roscpp
+  costmap_2d
+  grid_map_msgs
+  dynamic_reconfigure
 )
 
 catkin_package(
   CATKIN_DEPENDS
-    costmap_2d
-    dynamic_reconfigure
-    grid_map_msgs
     roscpp
+    costmap_2d
+    grid_map_msgs
+    dynamic_reconfigure
 )
 
 include_directories(

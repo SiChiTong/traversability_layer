@@ -10,11 +10,12 @@
   <license>TODO</license>
 
   <buildtool_depend>catkin</buildtool_depend>
-  <depend>costmap_2d</depend>
-  <depend>dynamic_reconfigure</depend>
-  <depend>grid_map_msgs</depend>
   <depend>roscpp</depend>
+  <depend>costmap_2d</depend>
+  <depend>grid_map_msgs</depend>
+  <depend>dynamic_reconfigure</depend>
 
   <export>
+    <costmap_2d plugin="${prefix}/costmap_plugins.xml" />
   </export>
 </package>
