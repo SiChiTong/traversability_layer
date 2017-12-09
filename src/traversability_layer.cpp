@@ -17,6 +17,7 @@ TraversabilityLayer::TraversabilityLayer(){
 
 void TraversabilityLayer::onInitialize(){
     ros::NodeHandle nh("~/" + name_);
+    matchSize();
 
     tm_sub_ = nh.subscribe("/traversability_estimation/traversability_map", 1, &TraversabilityLayer::traversabilityMapCallback, this);
     ROS_WARN("TraversabilityLayer is a cool layer that transforms traversability_maps to costmaps!");
@@ -26,7 +27,8 @@ void TraversabilityLayer::onInitialize(){
 void TraversabilityLayer::updateBounds(double robot_x, double robot_y, double robot_yaw, double* min_x,
                                            double* min_y, double* max_x, double* max_y){
     /*
-    double mark_x = robot_x + cos(robot_yaw), mark_y = robot_y + sin(robot_yaw);
+    double mark_x = robot_x + cos(robot_yaw);
+    double mark_y = robot_y + sin(robot_yaw);
     unsigned int mx;
     unsigned int my;
     if(worldToMap(mark_x, mark_y, mx, my)){
@@ -54,13 +56,58 @@ void TraversabilityLayer::updateBounds(double robot_x, double robot_y, double ro
             for(unsigned i = 0; i < input_tm_.layers.size(); i++){
                 if(input_tm_.layers[i].compare("traversability") == 0){
                     index_of_interest = i;
-                    ROS_ERROR("%u",index_of_interest);
-                    ROS_ERROR("%s",input_tm_.layers[index_of_interest].c_str());
                     break;
                 }
             }
         }
-        //TODO use the index_of_interest and then switch the flag to false
+
+        unsigned int mx;
+        unsigned int my;
+        float resolution = input_tm_.info.resolution; // meters / cell
+        float length_x = input_tm_.info.length_x; // meters
+        float length_y = input_tm_.info.length_y; // meters
+        unsigned data_offset = input_tm_.data[index_of_interest].layout.data_offset; // zero for traversability
+        unsigned index_x = input_tm_.data[index_of_interest].layout.dim[1].size; // assume row_index TODO add a check here
+        unsigned index_y = input_tm_.data[index_of_interest].layout.dim[0].size; // assume column_index TODO add a check here
+        bool found = false;
+        for(unsigned i = 0; i < input_tm_.data[index_of_interest].data.size(); i++){
+            float cellv = input_tm_.data[index_of_interest].data[i];
+            // If not NaN
+            if(cellv == cellv){
+                double cx = length_x - resolution * int(i % index_x);
+                double cy = length_y - resolution * int(i / index_y);
+                double d = sqrt(pow(cx - robot_x, 2) + pow(cy - robot_y, 2));
+                // TODO calculate the angle here (with atan2?)
+                double cellx = getSizeInMetersX() - d * cos(atan((cy/cx)));
+                double celly = getSizeInMetersY() - d * sin(atan((cy/cx)));
+                //double cellx = getResolution() * d * cos(atan2((cy - robot_y),(cx - robot_x)) - robot_yaw);
+                //double celly = getResolution() * d * sin(atan2((cy - robot_y),(cx - robot_x)) - robot_yaw);
+                //double celly = robot_y + d * sin(atan2((robot_y-cy),(robot_x-cx)) - robot_yaw);
+                ROS_WARN("cx:%f", cx);
+                ROS_WARN("cy:%f", cy);
+                ROS_WARN("cellx:%f", cellx);
+                ROS_WARN("celly:%f", celly);
+                if(worldToMap(cellx, celly, mx, my)){
+                    //ROS_ERROR("DOING THIS:%f", LETHAL_OBSTACLE*cellv);
+                    //indexToCells(i, mx, my);
+                    ROS_ERROR("mx:%u", mx);
+                    ROS_ERROR("my:%u", my);
+
+                    setCost(mx, my, LETHAL_OBSTACLE*cellv);
+                    setCost(mx, my, LETHAL_OBSTACLE);
+                    *min_x = std::min(*min_x, -200.0);
+                    *min_y = std::min(*min_y, -200.0);
+                    *max_x = std::max(*max_x, 200.0);
+                    *max_y = std::max(*max_y, 200.0);
+                    /*
+                    *min_x = std::min(*min_x, cellx);
+                    *min_y = std::min(*min_y, celly);
+                    *max_x = std::max(*max_x, cellx);
+                    *max_y = std::max(*max_y, celly);
+                    */
+                }
+            }
+        }
         new_tm_ = false;
     }
 }

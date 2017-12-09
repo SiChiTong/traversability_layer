@@ -1,6 +1,7 @@
 #ifndef TRAVERSABILITY_LAYER_H_
 #define TRAVERSABILITY_LAYER_H_
 
+#include <math.h>
 #include <ros/ros.h>
 #include <costmap_2d/layer.h>
 #include <grid_map_msgs/GridMap.h>
