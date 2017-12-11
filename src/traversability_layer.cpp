@@ -74,15 +74,11 @@ void TraversabilityLayer::updateBounds(double robot_x, double robot_y, double ro
             float cellv = input_tm_.data[index_of_interest].data[i];
             // If not NaN
             if(cellv == cellv){
-                double cx = length_x - resolution * int(i % index_x);
-                double cy = length_y - resolution * int(i / index_y);
+                double cx = resolution * int(index_x / 2 - i % index_x);
+                double cy = resolution * int(index_y / 2 - i / index_y);
                 double d = sqrt(pow(cx - robot_x, 2) + pow(cy - robot_y, 2));
-                // TODO calculate the angle here (with atan2?)
-                double cellx = getSizeInMetersX() - d * cos(atan((cy/cx)));
-                double celly = getSizeInMetersY() - d * sin(atan((cy/cx)));
-                //double cellx = getResolution() * d * cos(atan2((cy - robot_y),(cx - robot_x)) - robot_yaw);
-                //double celly = getResolution() * d * sin(atan2((cy - robot_y),(cx - robot_x)) - robot_yaw);
-                //double celly = robot_y + d * sin(atan2((robot_y-cy),(robot_x-cx)) - robot_yaw);
+                double cellx = d * cos(atan(cy/cx)) + getSizeInMetersX()/2;
+                double celly = d * sin(atan(cy/cx)) + getSizeInMetersY()/2;
                 ROS_WARN("cx:%f", cx);
                 ROS_WARN("cy:%f", cy);
                 ROS_WARN("cellx:%f", cellx);
@@ -135,6 +131,7 @@ void TraversabilityLayer::traversabilityMapCallback(const grid_map_msgs::GridMap
     input_tm_ = grid_map_msgs::GridMap(map);
     ROS_INFO("Updated traversability map!");
     new_tm_ = true;
+    resetMaps();
 }
 
 }
