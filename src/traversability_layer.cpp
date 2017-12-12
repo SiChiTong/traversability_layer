@@ -88,9 +88,10 @@ void TraversabilityLayer::updateBounds(double robot_x, double robot_y, double ro
                     //indexToCells(i, mx, my);
                     ROS_ERROR("mx:%u", mx);
                     ROS_ERROR("my:%u", my);
-
+                    ROS_ERROR("Cell value:%f", cellv);
+                    // This work in reverse because all numbers in traversability map
+                    // appear to be negative
                     setCost(mx, my, LETHAL_OBSTACLE*cellv);
-                    setCost(mx, my, LETHAL_OBSTACLE);
                     *min_x = std::min(*min_x, -200.0);
                     *min_y = std::min(*min_y, -200.0);
                     *max_x = std::max(*max_x, 200.0);
