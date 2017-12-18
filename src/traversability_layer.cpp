@@ -11,6 +11,7 @@ namespace traversability_layer{
 
 TraversabilityLayer::TraversabilityLayer(){
     input_tm_ = grid_map_msgs::GridMap();
+    current_ = true;
     new_tm_ = false;
     index_of_interest = 0;
 }
@@ -26,21 +27,6 @@ void TraversabilityLayer::onInitialize(){
 
 void TraversabilityLayer::updateBounds(double robot_x, double robot_y, double robot_yaw, double* min_x,
                                            double* min_y, double* max_x, double* max_y){
-    /*
-    double mark_x = robot_x + cos(robot_yaw);
-    double mark_y = robot_y + sin(robot_yaw);
-    unsigned int mx;
-    unsigned int my;
-    if(worldToMap(mark_x, mark_y, mx, my)){
-        setCost(mx, my, LETHAL_OBSTACLE);
-    }
-
-    *min_x = std::min(*min_x, mark_x);
-    *min_y = std::min(*min_y, mark_y);
-    *max_x = std::max(*max_x, mark_x);
-    *max_y = std::max(*max_y, mark_y);
-    */
-    //setCost(0, 0, LETHAL_OBSTACLE);
     if(new_tm_){
         bool new_search_required = false;
         if(index_of_interest < input_tm_.layers.size()){
@@ -78,16 +64,7 @@ void TraversabilityLayer::updateBounds(double robot_x, double robot_y, double ro
                 double d = sqrt(pow(cx - robot_x, 2) + pow(cy - robot_y, 2));
                 double cellx = d * cos(atan(cy/cx)) + getSizeInMetersX()/2;
                 double celly = d * sin(atan(cy/cx)) + getSizeInMetersY()/2;
-                ROS_WARN("cx:%f", cx);
-                ROS_WARN("cy:%f", cy);
-                ROS_WARN("cellx:%f", cellx);
-                ROS_WARN("celly:%f", celly);
                 if(worldToMap(cellx, celly, mx, my)){
-                    //ROS_ERROR("DOING THIS:%f", LETHAL_OBSTACLE*cellv);
-                    //indexToCells(i, mx, my);
-                    ROS_ERROR("mx:%u", mx);
-                    ROS_ERROR("my:%u", my);
-                    ROS_ERROR("Cell value:%f", cellv);
                     // Works with the latest (slightly customized!) traversability expression:
                     // 1 - (1.0 / 3.0) * (traversability_slope + traversability_step + traversability_roughness)
                     double cost = std::min(double(LETHAL_OBSTACLE), 2.0 * LETHAL_OBSTACLE * (cellv - 0.1));
