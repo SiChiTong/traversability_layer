@@ -13,7 +13,6 @@
   <depend>roscpp</depend>
   <depend>costmap_2d</depend>
   <depend>grid_map_msgs</depend>
-  <depend>dynamic_reconfigure</depend>
 
   <export>
     <costmap_2d plugin="${prefix}/costmap_plugins.xml" />

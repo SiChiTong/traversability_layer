@@ -7,7 +7,6 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   costmap_2d
   grid_map_msgs
-  dynamic_reconfigure
 )
 
 catkin_package(
@@ -15,7 +14,6 @@ catkin_package(
     roscpp
     costmap_2d
     grid_map_msgs
-    dynamic_reconfigure
 )
 
 include_directories(
