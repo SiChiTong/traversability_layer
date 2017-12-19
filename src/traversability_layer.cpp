@@ -111,7 +111,6 @@ void TraversabilityLayer::matchSize(){
 
 void TraversabilityLayer::traversabilityMapCallback(const grid_map_msgs::GridMap& map){
     input_tm_ = grid_map_msgs::GridMap(map);
-    ROS_INFO("Updated traversability map!");
     new_tm_ = true;
     resetMaps();
 }
