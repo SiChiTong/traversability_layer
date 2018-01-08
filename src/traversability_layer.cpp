@@ -58,6 +58,7 @@ void TraversabilityLayer::updateBounds(double robot_x, double robot_y, double ro
         for(unsigned i = 0; i < input_tm_.data[index_of_interest].data.size(); i++){
             float cellv = input_tm_.data[index_of_interest].data[i];
             // If not NaN
+            // TODO Add robot_yaw somewhere here!
             if(cellv == cellv){
                 double cx = resolution * int(index_x / 2 - i % index_x);
                 double cy = resolution * int(index_y / 2 - i / index_y);
