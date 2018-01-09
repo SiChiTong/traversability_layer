@@ -58,13 +58,13 @@ void TraversabilityLayer::updateBounds(double robot_x, double robot_y, double ro
         for(unsigned i = 0; i < input_tm_.data[index_of_interest].data.size(); i++){
             float cellv = input_tm_.data[index_of_interest].data[i];
             // If not NaN
-            // TODO Add robot_yaw somewhere here!
+            // TODO yaw is now fine, x,y also seems ok. I need to check it thoroughly to be sure.
             if(cellv == cellv){
                 double cx = resolution * int(index_x / 2 - i % index_x);
                 double cy = resolution * int(index_y / 2 - i / index_y);
-                double d = sqrt(pow(cx - robot_x, 2) + pow(cy - robot_y, 2));
-                double cellx = d * cos(atan(cy/cx)) + getSizeInMetersX()/2;
-                double celly = d * sin(atan(cy/cx)) + getSizeInMetersY()/2;
+                double d = sqrt(pow(cx, 2) + pow(cy, 2));
+                double cellx = d * cos(atan(cy/cx)+robot_yaw) + getSizeInMetersX()/2;
+                double celly = d * sin(atan(cy/cx)+robot_yaw) + getSizeInMetersY()/2;
                 if(worldToMap(cellx, celly, mx, my)){
                     // Works with the latest (slightly customized!) traversability expression:
                     // 1 - (1.0 / 3.0) * (traversability_slope + traversability_step + traversability_roughness)
